@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Gyankshetra - Dynamic Test Portal</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #121212;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 414px;
+            background-color: #edf7ed;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* ---------------- PAGE 1: START SCREEN ---------------- */
+        #start-screen {
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            min-height: 100vh;
+        }
+
+        .start-top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 0 8px 0;
+        }
+
+        .brand-logo-area {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 22px;
+            font-weight: 800;
+            color: #0d5c2b;
+        }
+
+        .brand-icon-box {
+            width: 34px;
+            height: 34px;
+            background-color: #00873e;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 16px;
+        }
+
+        .top-action-icons {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .icon-btn {
+            background: #ffffff;
+            border: 1px solid #c2e5cb;
+            border-radius: 50%;
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            cursor: pointer;
+            color: #00873e;
+        }
+
+        .start-main-card {
+            background-color: #ffffff;
+            border: 1.5px solid #d1fae5;
+            border-radius: 20px;
+            padding: 20px 16px;
+            box-shadow: 0 4px 12px rgba(0, 135, 62, 0.06);
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .subject-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            border: 1.5px solid #00873e;
+            color: #00873e;
+            border-radius: 50px;
+            padding: 4px 12px;
+            font-size: 11px;
+            font-weight: 800;
+            background-color: #f0fdf4;
+            align-self: flex-start;
+            letter-spacing: 0.5px;
+        }
+
+        .test-heading { color: #0d5c2b; font-size: 22px; font-weight: 800; line-height: 1.3; }
+        .test-subtext { color: #4a5568; font-size: 12.5px; font-weight: 500; }
+
+        .start-info-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 4px; }
+        .start-info-box {
+            background-color: #f0fdf4; border: 1.5px solid #c2e5cb; border-radius: 14px;
+            padding: 12px 6px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 4px;
+        }
+        .start-info-box .box-icon { font-size: 18px; margin-bottom: 2px; }
+        .start-info-box .box-val { font-size: 13px; font-weight: 800; color: #1a202c; }
+        .start-info-box .box-lbl { font-size: 10px; color: #718096; font-weight: 600; }
+
+        .instructions-card {
+            background-color: #ffffff; border-radius: 16px; padding: 14px; border: 1.5px solid #e2e8f0;
+        }
+        .instructions-card ul { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+        .instructions-card li { font-size: 12px; color: #2d3748; padding-left: 14px; position: relative; font-weight: 500; }
+        .instructions-card li::before { content: "•"; color: #00873e; font-weight: bold; position: absolute; left: 0; font-size: 14px; }
+
+        .start-btn {
+            width: 100%; background-color: #00873e; color: #fff; border: none;
+            border-radius: 12px; padding: 14px; font-size: 15px; font-weight: 800;
+            cursor: pointer; box-shadow: 0 4px 10px rgba(0, 135, 62, 0.2);
+        }
+
+        /* ---------------- ADMIN POPUP MODAL (PROFILE CLICK) ---------------- */
+        .admin-modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); display: none; justify-content: center;
+            align-items: center; z-index: 200; padding: 16px;
+        }
+
+        .admin-modal-card {
+            background: #ffffff; width: 100%; max-width: 380px;
+            border-radius: 20px; padding: 16px; display: flex;
+            flex-direction: column; gap: 10px; max-height: 90vh; overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 16px; font-weight: 800; color: #0d5c2b; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;
+        }
+
+        .input-label { font-size: 11px; font-weight: 700; color: #4a5568; margin-top: 4px; }
+        .admin-input { width: 100%; padding: 8px 10px; border: 1px solid #c2e5cb; border-radius: 8px; font-size: 12px; }
+
+        .json-textarea {
+            width: 100%; height: 140px; border: 1px solid #c2e5cb;
+            border-radius: 10px; padding: 8px; font-family: monospace;
+            font-size: 11px; background-color: #f8fafc; color: #1e293b; resize: vertical;
+        }
+
+        .share-link-box {
+            background: #f0fdf4; border: 1px dashed #00873e; padding: 8px;
+            border-radius: 8px; font-size: 11px; word-break: break-all; color: #0d5c2b; display: none;
+        }
+
+        .gen-btn { background-color: #0d5c2b; color: white; border: none; padding: 10px; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 13px; }
+
+        /* ---------------- PAGE 2: TEST INTERFACE ---------------- */
+        #test-screen { display: none; flex-direction: column; min-height: 100vh; background-color: #000; position: relative; }
+        .app-header { background-color: #00873e; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; color: white; }
+        .logo-area { font-size: 20px; font-weight: 800; }
+        .menu-btn { background: #ffffff; border: none; border-radius: 8px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; font-size: 20px; color: #00873e; cursor: pointer; }
+
+        .timer-bar { background-color: #d8f0de; margin: 10px 12px 6px 12px; padding: 8px 12px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: 700; color: #0d5c2b; }
+        .timer-badge { background-color: #00873e; color: white; padding: 4px 10px; border-radius: 20px; font-size: 13px; display: flex; align-items: center; gap: 4px; }
+
+        .quiz-body { background-color: #ffffff; margin: 6px 12px 70px 12px; border-radius: 16px; padding: 16px; flex-grow: 1; }
+        .q-counter { color: #00873e; font-weight: 800; font-size: 14px; margin-bottom: 8px; }
+        .q-text { font-size: 14px; font-weight: 700; color: #1a202c; line-height: 1.4; margin-bottom: 16px; }
+
+        .option-box { border: 1.5px solid #e2e8f0; border-radius: 10px; padding: 12px; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; font-size: 13px; font-weight: 600; color: #2d3748; background-color: #fff; }
+        .option-box.selected { border-color: #00873e; background-color: #f0fdf4; color: #00873e; }
+
+        .bottom-bar { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 414px; background-color: #ffffff; padding: 10px 16px; display: flex; justify-content: space-between; gap: 10px; border-top: 1px solid #e2e8f0; z-index: 10; }
+        .nav-btn { flex: 1; padding: 12px; border-radius: 10px; font-weight: 700; font-size: 14px; cursor: pointer; text-align: center; }
+        .prev-btn { background-color: #ffffff; color: #2d3748; border: 1.5px solid #cbd5e1; }
+        .next-btn { background-color: #00873e; color: #ffffff; border: none; }
+
+        /* DRAWER PALETTE */
+        .palette-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); display: none; z-index: 99; }
+        .palette-drawer { position: fixed; top: 0; right: -320px; width: 290px; height: 100%; background-color: #ffffff; z-index: 100; transition: right 0.3s ease; padding: 16px; display: flex; flex-direction: column; }
+        .palette-drawer.open { right: 0; }
+        .palette-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .palette-title { font-size: 18px; font-weight: 800; color: #1a202c; }
+        .close-btn { font-size: 20px; cursor: pointer; color: #a0aec0; border: none; background: none; }
+        .grid-container { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; overflow-y: auto; max-height: calc(100vh - 180px); }
+        .q-num-btn { aspect-ratio: 1; border-radius: 8px; border: 1.5px solid #cbd5e1; background-color: #f8fafc; color: #475569; font-weight: 700; font-size: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .q-num-btn.answered { background-color: #0d5c2b; color: white; border-color: #0d5c2b; }
+        .q-num-btn.current { border: 2px solid #00873e; background-color: #eaf6ed; color: #00873e; }
+        .submit-test-btn { width: 100%; background-color: #00873e; color: white; border: none; border-radius: 10px; padding: 12px; font-size: 15px; font-weight: 700; margin-top: 12px; cursor: pointer; }
+
+        /* ---------------- PAGE 3: RESULT & AI ANALYSIS ---------------- */
+        #result-screen { display: none; padding: 16px; background-color: #f4f6f8; min-height: 100vh; flex-direction: column; gap: 14px; }
+        .res-top-card { background-color: #00873e; border-radius: 16px; padding: 16px; color: white; display: flex; justify-content: space-between; align-items: center; }
+        .score-circle { width: 80px; height: 80px; border-radius: 50%; border: 4px solid #ffffff; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+
+        .toppers-card { background: white; border-radius: 16px; padding: 14px; border: 1px solid #e2e8f0; }
+        .toppers-title { font-size: 14px; font-weight: 800; color: #0d5c2b; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+        .topper-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #edf2f7; font-size: 12.5px; }
+        .topper-rank { font-weight: 800; color: #00873e; }
+
+        .analysis-header { display: flex; justify-content: space-between; align-items: center; font-size: 15px; font-weight: 800; color: #1a202c; }
+        .analysis-card { background: white; border-radius: 16px; padding: 14px; border: 1px solid #e2e8f0; margin-top: 10px; }
+        .q-badge { display: inline-block; background-color: #00873e; color: white; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 6px; margin-bottom: 6px; }
+        .q-text-analysis { font-size: 13.5px; font-weight: 700; color: #1a202c; margin-bottom: 10px; }
+        .ans-line { font-size: 12px; margin-bottom: 4px; font-weight: 600; }
+        .ans-user-wrong { color: #e53e3e; }
+        .ans-correct { color: #00873e; }
+
+        .ai-box { background-color: #fefce8; border: 1px solid #fef08a; border-radius: 10px; padding: 10px; margin-top: 8px; font-size: 11.5px; color: #713f12; line-height: 1.4; position: relative; }
+        .ai-title { font-weight: 800; margin-bottom: 4px; display: flex; align-items: center; gap: 4px; }
+        .status-pill { position: absolute; right: 10px; top: 10px; font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 4px; color: white; }
+        .pill-correct { background-color: #00873e; }
+        .pill-wrong { background-color: #e53e3e; }
+
+        .pagination-bar { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; padding: 10px 0; }
+        .page-btn { background-color: #ffffff; border: 1.5px solid #00873e; color: #00873e; padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 12px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+
+        <!-- 1. START SCREEN -->
+        <div id="start-screen">
+            <div class="start-top-bar">
+                <div class="brand-logo-area">
+                    <div class="brand-icon-box">📖</div>
+                    Gyankshetra
+                </div>
+                <div class="top-action-icons">
+                    <div class="icon-btn">🔔</div>
+                    <!-- Profile Icon click to open Admin Panel -->
+                    <div class="icon-btn" onclick="openAdminPanel()" title="Admin Panel">👤</div>
+                </div>
+            </div>
+
+            <div class="start-main-card">
+                <div class="subject-pill" id="display-subj-tag">🧪 CHEMISTRY • SET - 1</div>
+                <h1 class="test-heading" id="display-subj-title">BPSC TRE Chemical<br>Reaction SET 1</h1>
+                <p class="test-subtext">Bihar Public Service Commission - Teacher Recruitment</p>
+
+                <div class="start-info-grid">
+                    <div class="start-info-box">
+                        <div class="box-icon">📋</div>
+                        <div class="box-val" id="disp-q-count">3 Questions</div>
+                        <div class="box-lbl">Total MCQs</div>
+                    </div>
+                    <div class="start-info-box">
+                        <div class="box-icon">⏱️</div>
+                        <div class="box-val">10 Minutes</div>
+                        <div class="box-lbl">Time Duration</div>
+                    </div>
+                    <div class="start-info-box">
+                        <div class="box-icon">⚠️</div>
+                        <div class="box-val">1/3 Negative</div>
+                        <div class="box-lbl">Negative Marking</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="instructions-card">
+                <h3 style="color:#00873e; font-size: 13.5px; margin-bottom:8px; font-weight: 800;">📖 परीक्षा निर्देश (Instructions)</h3>
+                <ul>
+                    <li>प्रत्येक प्रश्न में विकल्प दिए गए हैं।</li>
+                    <li>प्रत्येक गलत उत्तर पर 1/3 अंक काटा जाएगा।</li>
+                </ul>
+            </div>
+
+            <button class="start-btn" onclick="startTest()">START TEST ➔</button>
+        </div>
+
+        <!-- ADMIN MODAL POPUP (PROFILE CLICK) -->
+        <div class="admin-modal-overlay" id="adminModal">
+            <div class="admin-modal-card">
+                <div class="modal-header">
+                    <span>👑 Admin Panel - Question Creator</span>
+                    <span style="cursor:pointer;" onclick="closeAdminPanel()">✕</span>
+                </div>
+
+                <div class="input-label">Subject Tag:</div>
+                <input type="text" class="admin-input" id="adm-subj-tag" value="🧪 CHEMISTRY • SET - 1">
+
+                <div class="input-label">Test Title:</div>
+                <input type="text" class="admin-input" id="adm-subj-title" value="BPSC TRE Chemical Reaction SET 1">
+
+                <div class="input-label">Questions (JSON Format):</div>
+                <textarea class="json-textarea" id="json-editor"></textarea>
+
+                <button class="gen-btn" onclick="generateShareableLink()">🔗 Generate Share Link</button>
+
+                <div class="share-link-box" id="shareLinkBox">
+                    <b>Share Link Created:</b>
+                    <p id="generatedUrlText" style="margin-top:4px; font-size:10px;"></p>
+                    <button onclick="copyGeneratedUrl()" style="margin-top:6px; background:#00873e; color:#fff; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; font-size:10px;">Copy Link 📋</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. MAIN TEST SCREEN -->
+        <div id="test-screen">
+            <div class="app-header">
+                <div class="logo-area">🎓 Gyankshetra</div>
+                <button class="menu-btn" onclick="togglePalette()">☰</button>
+            </div>
+
+            <div class="timer-bar">
+                <span id="test-screen-title">Mock Test • Gyankshetra</span>
+                <div class="timer-badge">⏱ <span id="timer">10:00</span></div>
+            </div>
+
+            <div class="quiz-body">
+                <div class="q-counter" id="q-number-title">Q1 of 3</div>
+                <div class="q-text" id="q-text-content">Loading...</div>
+                <div id="options-container"></div>
+            </div>
+
+            <div class="bottom-bar">
+                <button class="nav-btn prev-btn" onclick="prevQuestion()">← Prev</button>
+                <button class="nav-btn next-btn" onclick="nextQuestion()">Next →</button>
+            </div>
+        </div>
+
+        <!-- DRAWER PALETTE -->
+        <div class="palette-overlay" id="paletteOverlay" onclick="togglePalette()"></div>
+        <div class="palette-drawer" id="paletteDrawer">
+            <div class="palette-header">
+                <div class="palette-title">Questions</div>
+                <button class="close-btn" onclick="togglePalette()">✕</button>
+            </div>
+            <div class="answered-count" id="answered-count-text" style="font-size:12px; margin-bottom:8px;">0 Answered</div>
+            <div class="grid-container" id="question-grid"></div>
+            <button class="submit-test-btn" onclick="submitTest()">✓ Submit Test</button>
+        </div>
+
+        <!-- 3. RESULT & AI ANALYSIS SCREEN -->
+        <div id="result-screen">
+            <div class="res-top-card">
+                <div>
+                    <h2 style="font-size: 18px; margin-bottom: 4px;">✔ Completed!</h2>
+                    <p style="font-size: 12px; opacity: 0.9;">Gyankshetra Mock Test</p>
+                </div>
+                <div class="score-circle">
+                    <span style="font-size: 16px; font-weight: 800;" id="res-score-num">0</span>
+                    <span style="font-size: 9px; opacity: 0.8;" id="res-score-pct">0% Score</span>
+                </div>
+            </div>
+
+            <div class="toppers-card">
+                <div class="toppers-title">🏆 Top Performers (Score Board)</div>
+                <div class="topper-item"><span><span class="topper-rank">🥇 1st:</span> Rahul Kumar</span><b>9.67</b></div>
+                <div class="topper-item"><span><span class="topper-rank">🥈 2nd:</span> Priya Sharma</span><b>9.00</b></div>
+                <div class="topper-item" style="border:none;"><span><span class="topper-rank">🥉 3rd:</span> Amit Verma</span><b>8.33</b></div>
+            </div>
+
+            <div class="analysis-header">
+                <span>Analysis</span>
+                <span style="font-size: 12px; color: #00873e;" id="page-indicator">Page 1</span>
+            </div>
+
+            <div id="analysis-cards-container"></div>
+
+            <div class="pagination-bar">
+                <button class="page-btn" onclick="prevAnalysisPage()">← Previous</button>
+                <button class="page-btn" onclick="nextAnalysisPage()">Next →</butto
